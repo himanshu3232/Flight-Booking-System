@@ -1,6 +1,7 @@
 package com.capgemini.flight_booking.booking_service.entity;
 
 import com.capgemini.flight_booking.booking_service.enums.BookingStatus;
+import com.capgemini.flight_booking.booking_service.enums.CheckInStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,6 +33,8 @@ public class BookingEntity {
     private String passengerName;
     private String passengerEmail;
     private int passengerAge;
+    @Enumerated(value = EnumType.STRING)
+    private CheckInStatus checkIn;
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private BookingStatus status;

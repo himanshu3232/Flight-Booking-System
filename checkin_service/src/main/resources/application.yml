@@ -1,3 +1,56 @@
+server:
+  port: 5001
+
 spring:
   application:
     name: checkin-service
+  cloud:
+    function:
+      definition: checkIn
+    stream:
+      bindings:
+        checkIn-out-0:
+          destination: check-in-communication
+          group: ${spring.application.name}
+
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    connection-timeout: 10s
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MYSQL_URL}/checkin_service
+    username: ${MYSQL_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
+
+
+info:
+  app:
+    name: checkin_service
+    description: "Flight Checkin Service"
+    version: 1.0.0
+

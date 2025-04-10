@@ -9,4 +9,5 @@ public interface IFlightSearchService {
     List<FlightDto> getFlights(String from, String to, LocalDate date);
     List<FlightDto> getAllFlights();
     FlightDto getFlightById(long flightId);
+    void updateSeats(FlightDto flightDto);
 }

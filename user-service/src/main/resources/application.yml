@@ -12,17 +12,18 @@ spring:
   application:
     name: user-service
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/user_service
-    username: ${DB_USERNAME}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MYSQL_URL}/user_service
+    username: ${MYSQL_USERNAME}
     password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
       ddl-auto: update
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
 
 eureka:
   instance:

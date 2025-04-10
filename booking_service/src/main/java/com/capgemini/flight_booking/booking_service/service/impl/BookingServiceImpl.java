@@ -6,6 +6,7 @@ import com.capgemini.flight_booking.booking_service.dto.FlightDto;
 import com.capgemini.flight_booking.booking_service.dto.ResponseDto;
 import com.capgemini.flight_booking.booking_service.entity.BookingEntity;
 import com.capgemini.flight_booking.booking_service.enums.BookingStatus;
+import com.capgemini.flight_booking.booking_service.enums.CheckInStatus;
 import com.capgemini.flight_booking.booking_service.enums.PaymentStatus;
 import com.capgemini.flight_booking.booking_service.exception.InvalidFlightIdException;
 import com.capgemini.flight_booking.booking_service.exception.NoBookingsFoundException;
@@ -62,12 +63,14 @@ public class BookingServiceImpl implements IBookingService {
             throw new NoSeatsAvailableException("No seats available");
         }
 
-        sendCommunication(flightDto);
+        //update the number of seats available
+        updateSeats(flightDto);
 
         //Generate pnr code
         bookingEntity.setPnr(GeneratePnr.generatePnr(flightDto.airline()));
         bookingEntity.setStatus(BookingStatus.BOOKED);
         bookingEntity.setPaymentId(paymentId);
+        bookingEntity.setCheckIn(CheckInStatus.NOT_CHECKED_IN);
         bookingRepository.save(bookingEntity);
 
         return new ResponseDto(HttpStatus.CREATED, "Booking successful with pnr:" + bookingEntity.getPnr(), LocalDateTime.now());
@@ -87,11 +90,17 @@ public class BookingServiceImpl implements IBookingService {
         bookingRepository.deleteByPnr(pnr);
     }
 
+    @Override
+    public void checkIn(String pnr) {
+        BookingEntity bookingEntity = bookingRepository.findByPnr(pnr).orElseThrow(() -> new NoBookingsFoundException("No bookings found with the pnr " + pnr));
+        bookingEntity.setCheckIn(CheckInStatus.CHECKED_IN);
+        bookingRepository.save(bookingEntity);
+    }
 
-    private void sendCommunication(FlightDto flightDto){
+
+    private void updateSeats(FlightDto flightDto){
         log.debug("Sending flightDto to RabbitMQ to update seats available {}" , flightDto);
-        var result = streamBridge.send("sendCommunication-out-0", flightDto);
+        var result = streamBridge.send("updateSeats-out-0", flightDto);
         log.debug("Result from RabbitMQ: {}", result);
-
     }
 }

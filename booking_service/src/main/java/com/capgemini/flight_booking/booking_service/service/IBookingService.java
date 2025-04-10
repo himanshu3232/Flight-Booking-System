@@ -13,4 +13,5 @@ public interface IBookingService {
     ResponseDto bookFlight(BookingRequestDto bookingRequestDTO) throws PaymentFailedException, InvalidFlightIdException, NoSeatsAvailableException;
     BookingRequestDto getBookingByPnr(String pnr) throws NoBookingsFoundException;
     void cancelBooking(String pnr);
+    void checkIn(String pnr);
 }

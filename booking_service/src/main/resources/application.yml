@@ -6,11 +6,14 @@ spring:
     name: booking-service
   cloud:
     function:
-      definition: updateSeats
+      definition: updateSeats; checkIn
     stream:
       bindings:
-        sendCommunication-out-0:
-          destination: send-communication
+        updateSeats-out-0:
+          destination: update-seats-communication
+          group: ${spring.application.name}
+        checkIn-in-0:
+          destination: check-in-communication
           group: ${spring.application.name}
 
 
@@ -22,19 +25,17 @@ spring:
     connection-timeout: 10s
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/booking_service
-    username: ${DB_USERNAME}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MYSQL_URL}/booking_service
+    username: ${MYSQL_USERNAME}
     password: ${DB_PASSWORD}
+
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
     properties:
       hibernate:
-        format_sql: true
-  sql:
-    init:
-      mode: never
+        dialect: org.hibernate.dialect.MySQL8Dialect
 
 logging:
   level:
