@@ -7,9 +7,10 @@ spring:
     active: prod
   security:
     user:
+      name: okok
       password: okok
   application:
-    name: user_service
+    name: user-service
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/user_service

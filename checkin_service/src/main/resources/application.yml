@@ -1,1 +1,3 @@
-spring.application.name=checkin_service
+spring:
+  application:
+    name: checkin-service

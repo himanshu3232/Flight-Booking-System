@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: fare_service
+    name: fare-service
 
 eureka:
   instance:

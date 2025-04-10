@@ -4,6 +4,8 @@ import static com.capgemini.flight_booking.user_service.constants.UserConstants.
 import com.capgemini.flight_booking.user_service.dto.ResponseDto;
 import com.capgemini.flight_booking.user_service.dto.UserProfileDto;
 import com.capgemini.flight_booking.user_service.service.IUserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +28,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @Slf4j
-@Profile({"dev"})
+@Profile({"dev", "prod"})
+@Tag(name = "User API", description = "Do CURD operations on users")
 public class UserController {
 
     //user service bean
@@ -38,6 +41,7 @@ public class UserController {
      * @param userProfileDto contains user details from the frontend
      * @return ResponseDto can be either success or failure based on the request
      */
+    @Operation(summary = "Register a new user", description = "Creates a new user and adds to the database")
     @PostMapping
     public ResponseEntity<ResponseDto> createUser(@Valid @RequestBody UserProfileDto userProfileDto) {
         log.trace("Inside createUser");
@@ -55,6 +59,7 @@ public class UserController {
      * @param userName represents a unique user
      * @return UserProfileDto, if the user exists with that userId
      */
+    @Operation(summary = "Get user details", description = "Returns the details of the user")
     @GetMapping("/{userName}")
     public ResponseEntity<UserProfileDto> getUser(@PathVariable String userName) {
         log.trace("Inside getUser");
@@ -73,6 +78,7 @@ public class UserController {
      * @param userProfileDto contains user details from the frontend
      * @return ResponseDto based on the result of the request
      */
+    @Operation(summary = "Update user details", description = "Updates the details of the user")
     @PutMapping("/{userName}")
     public ResponseEntity<ResponseDto> updateUser(@PathVariable String userName, @RequestBody UserProfileDto userProfileDto) {
         log.trace("Inside updateUser");
@@ -90,6 +96,7 @@ public class UserController {
      * @param userName represents a unique user
      * @return ResponseDto based on the result of the request
      */
+    @Operation(summary = "Delete a user account", description = "Deletes the user details from the database")
     @DeleteMapping("/{userName}")
     public ResponseEntity<ResponseDto> deleteUser(@PathVariable String userName) {
         log.trace("Inside deleteUser");

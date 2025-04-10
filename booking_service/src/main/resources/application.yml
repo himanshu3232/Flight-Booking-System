@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: booking_service
+    name: booking-service
   cloud:
     function:
       definition: updateSeats
