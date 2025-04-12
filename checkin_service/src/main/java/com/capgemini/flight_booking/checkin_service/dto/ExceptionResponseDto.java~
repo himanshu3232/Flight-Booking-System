@@ -1,4 +1,0 @@
-package com.capgemini.flight_booking.checkin_service.dto;
-
-public class ExceptionResponseDto {
-}

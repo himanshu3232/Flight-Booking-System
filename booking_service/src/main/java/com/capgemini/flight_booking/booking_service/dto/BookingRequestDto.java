@@ -4,11 +4,11 @@ import jakarta.validation.constraints.*;
 
 /**
  *
- * @param flightId
- * @param passengerName
- * @param passengerEmail
- * @param passengerAge
- * @param paidAmount
+ * @param flightId foreign key of flights table
+ * @param passengerName passenger name
+ * @param passengerEmail passenger email
+ * @param passengerAge passenger age
+ * @param paidAmount paid amount
  */
 public record BookingRequestDto (
         @Min(1)

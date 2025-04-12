@@ -3,6 +3,9 @@ package com.capgemini.flight_booking.search_service.dto.mapper;
 import com.capgemini.flight_booking.search_service.dto.FlightDto;
 import com.capgemini.flight_booking.search_service.entity.FlightEntity;
 
+/**
+ * Maps the FlightEntity to the FlightDto
+ */
 public class Mapper {
 
     private Mapper() {}

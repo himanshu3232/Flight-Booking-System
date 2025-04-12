@@ -13,6 +13,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
+/**
+ * Controller class for booking service
+ * Allows user to book a flight, get booking details and cancel a booking
+ */
 @RestController
 @Validated
 @RequiredArgsConstructor
@@ -22,6 +26,11 @@ public class BookingController {
 
     private final IBookingService bookingService;
 
+    /**
+     *
+     * @param bookingRequestDto request body from client
+     * @return response entity that a flight has been booked successfully
+     */
     @Operation(summary = "Book a flight", description = "Book a flight by passing BookingRequestDto")
     @PostMapping
     public ResponseEntity<ResponseDto> bookFlight(@Valid @RequestBody BookingRequestDto bookingRequestDto) {
@@ -29,12 +38,22 @@ public class BookingController {
                 .body(bookingService.bookFlight(bookingRequestDto));
     }
 
+    /**
+     *
+     * @param pnr unique pnr code details of the booking
+     * @return response entity with booking details
+     */
     @Operation(summary = "Get booking details", description = "Get booking details by passing PNR details")
     @GetMapping
     public ResponseEntity<BookingRequestDto> getBookingByPnr(@RequestParam String pnr) {
         return ResponseEntity.ok(bookingService.getBookingByPnr(pnr));
     }
 
+    /**
+     *
+     * @param pnr unique pnr code details of the booking
+     * @return response entity with success message
+     */
     @Operation(summary = "Cancel a booking", description = "Cancel a booking by passing PNR details")
     @DeleteMapping
     public ResponseEntity<ResponseDto> cancelBooking(@RequestParam String pnr) {

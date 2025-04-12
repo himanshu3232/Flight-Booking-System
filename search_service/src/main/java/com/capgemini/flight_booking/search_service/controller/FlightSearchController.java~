@@ -15,10 +15,7 @@ import java.util.List;
 
 
 /**
- * Exposes the Flight Search REST APIs
- * Allows you to search for flights
- * Allows you to get flight details by id
- * Get all flights available
+ * 
  */
 @RestController
 @RequestMapping("/flights")
@@ -28,34 +25,18 @@ public class FlightSearchController {
 
     private final IFlightSearchService flightSearchService;
 
-    /**
-     * Checks if the flight is available
-     * @param from origin
-     * @param to destination
-     * @param date date of onboarding
-     * @return list of flights
-     */
     @Operation(summary = "Search for flights", description = "Search for flights by passing from, to and date")
     @GetMapping("/search")
     public ResponseEntity<List<FlightDto>> searchFlights(@RequestParam String from, @RequestParam String to, @RequestParam String date) {
         return ResponseEntity.ok(flightSearchService.getFlights(from, to,  LocalDate.parse(date)));
     }
 
-    /**
-     * Get flight summary by passing the ID
-     * @param flightId unique flight id
-     * @return flight details
-     */
     @Operation(summary = "Get flight details", description = "Get flight details by passing flightId")
     @GetMapping
     public ResponseEntity<FlightDto> getFlightById(@RequestParam long flightId) {
         return ResponseEntity.ok(flightSearchService.getFlightById(flightId));
     }
 
-    /**
-     * Fetch the list of all the flights available
-     * @return list of all available flights
-     */
     @Operation(summary = "Get all available flights", description = "Get all available flights")
     @GetMapping("/all")
     public ResponseEntity<List<FlightDto>> getAllFlights() {

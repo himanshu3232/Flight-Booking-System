@@ -18,9 +18,11 @@ import java.util.List;
 public class FlightSearchServiceImpl implements IFlightSearchService {
 
     private final FlightRepository flightRepository;
+
+
     /**
      * @param from onboarding airport
-     * @param to destination
+     * @param to destination airport
      * @param date date of onboarding
      * @return list of flights available from onboarding airport to destination on a particular day
      */
@@ -40,7 +42,7 @@ public class FlightSearchServiceImpl implements IFlightSearchService {
 
     /**
      * @param flightId unique flightId
-     * @return FlightDto
+     * @return FlightDto of a unique flight
      */
     @Override
     public FlightDto getFlightById(long flightId) {
@@ -49,7 +51,7 @@ public class FlightSearchServiceImpl implements IFlightSearchService {
 
 
     /**
-     * @param flightDto with updated number of seats
+     * @param flightDto with flight id and number of seats previously available
      */
     @Override
     public void updateSeats(FlightDto flightDto) {

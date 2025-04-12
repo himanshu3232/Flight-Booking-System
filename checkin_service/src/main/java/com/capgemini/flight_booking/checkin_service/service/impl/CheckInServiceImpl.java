@@ -1,7 +1,9 @@
 package com.capgemini.flight_booking.checkin_service.service.impl;
 
+import com.capgemini.flight_booking.checkin_service.client.VerifyPnr;
 import com.capgemini.flight_booking.checkin_service.dto.CheckInDto;
 import com.capgemini.flight_booking.checkin_service.entity.CheckInEntity;
+import com.capgemini.flight_booking.checkin_service.enums.CheckInStatus;
 import com.capgemini.flight_booking.checkin_service.exception.AlreadyCheckedInException;
 import com.capgemini.flight_booking.checkin_service.exception.InvalidPnrException;
 import com.capgemini.flight_booking.checkin_service.repository.CheckInRepository;
@@ -17,20 +19,23 @@ public class CheckInServiceImpl implements ICheckInService {
 
     private final StreamBridge streamBridge;
     private final CheckInRepository checkInRepository;
+    private final VerifyPnr verifyPnr;
 
     /**
-     * @param pnr unique code
+     * Generates a random seat number
+     * @param pnr unique booking pnr code
      * @return a random seat number
      */
     @Override
     public String generateSeatNumber(String pnr) {
         int num = (int) (Math.random() * 100);
-        return String.format("%d%s", num, ((char) (num%26) + 'A') );
+        return String.format("%d%c", num, (char)((num%26) + 'A') );
     }
 
     /**
-     * @param pnr unique code
-     * @return CheckInDto with seat number
+     * Marks a booking as checked in
+     * @param pnr unique booking pnr code
+     * @return CheckInDto response containing seat number, pnr and check-in id
      */
     @Override
     public CheckInDto checkIn(String pnr) {
@@ -45,7 +50,7 @@ public class CheckInServiceImpl implements ICheckInService {
 
 
         String seatNumber = generateSeatNumber(pnr);
-        CheckInEntity checkInEntity = new CheckInEntity(pnr,true,seatNumber);
+        CheckInEntity checkInEntity = new CheckInEntity(pnr, CheckInStatus.CHECKED_IN,seatNumber);
         checkInRepository.save(checkInEntity);
         sendCheckInNotification(pnr);
 
@@ -55,18 +60,19 @@ public class CheckInServiceImpl implements ICheckInService {
 
 
     /**
+     * Sends check-in notification to Booking service
      * @param pnr unique code
      */
     private void sendCheckInNotification(String pnr) {
         streamBridge.send("checkIn-out-0", pnr);
     }
 
+
     /**
-     * TODO fetch pnr from booking-service
+     * Checks if pnr is valid
      * @param pnr unique code
      */
     private boolean isValidPnr(String pnr) {
-        //fetch pnr from booking-service
-        return true;
+        return verifyPnr.verifyPnr(pnr);
     }
 }

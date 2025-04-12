@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+
+/**
+ * Exposes the CheckIn REST API(s)
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/checkin")
@@ -20,6 +24,11 @@ public class CheckInController {
 
     private final ICheckInService checkInService;
 
+    /**
+     * checkIn a booking
+     * @param pnr unique pnr code
+     * @return response entity of CheckInDto that a check-in has been made
+     */
     @Operation(summary = "Check-in a booking", description = "Check-in a booking by passing PNR details")
     @PostMapping
     public ResponseEntity<CheckInDto> checkIn(@RequestParam String pnr) {

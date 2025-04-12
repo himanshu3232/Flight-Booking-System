@@ -4,6 +4,18 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ *
+ * @param flightId unique flight id working as a foreign key
+ * @param airline airline name
+ * @param departureAirport departure airport
+ * @param arrivalAirport arrival airport
+ * @param departureDate departure date
+ * @param arrivalDate arrival date
+ * @param duration duration of flight
+ * @param price price of flight
+ * @param seatsAvailable seats available
+ */
 public record FlightDto (
         @Min(1)
         long flightId,

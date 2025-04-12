@@ -2,6 +2,8 @@ server:
   port: 2000
 
 spring:
+  profiles:
+    active: prod
   application:
     name: fare-service
 

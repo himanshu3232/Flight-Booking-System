@@ -39,6 +39,15 @@ public class BookingServiceImpl implements IBookingService {
     private final StreamBridge streamBridge;
 
 
+    /**
+     * Book a flight
+     * @param bookingRequestDTO request body by the client
+     * @return returns a response
+     * @throws PaymentFailedException if payment fails
+     * @throws InvalidFlightIdException if flight id is invalid
+     * @throws NoSeatsAvailableException if no seats are available
+     */
+
     @Override
     public ResponseDto bookFlight(BookingRequestDto bookingRequestDTO) throws PaymentFailedException, InvalidFlightIdException, NoSeatsAvailableException {
         BookingEntity bookingEntity = mapToBookingEntity(bookingRequestDTO);
@@ -50,7 +59,9 @@ public class BookingServiceImpl implements IBookingService {
             throw new PaymentFailedException("Payment failed!");
         }
 
-        FlightDto flightDto = flightAvailabilityClient.getFlightAvailabilityById(bookingRequestDTO.flightId());
+        FlightDto flightDto = flightAvailabilityClient
+                .getFlightAvailabilityById(bookingRequestDTO.flightId())
+                .block();
 
         //Check if flight is available
         if(flightDto == null){
@@ -76,6 +87,14 @@ public class BookingServiceImpl implements IBookingService {
         return new ResponseDto(HttpStatus.CREATED, "Booking successful with pnr:" + bookingEntity.getPnr(), LocalDateTime.now());
     }
 
+
+    /**
+     * Get booking details by passing in the pnr
+     * @param pnr unique pnr code
+     * @return returns a response of the booking
+     * @throws NoBookingsFoundException if no bookings are found
+     */
+
     @Override
     public BookingRequestDto getBookingByPnr(String pnr) throws NoBookingsFoundException {
         BookingEntity bookingEntity = bookingRepository
@@ -85,11 +104,22 @@ public class BookingServiceImpl implements IBookingService {
         return mapToBookingRequestDto(bookingEntity);
     }
 
+    /**
+     *  Cancels the booking made by the client
+     * @param pnr unique pnr code
+     */
+
     @Override
     public void cancelBooking(String pnr) {
-        bookingRepository.deleteByPnr(pnr);
+        if(getBookingByPnr(pnr) != null){
+            bookingRepository.deleteByPnr(pnr);
+        }
     }
 
+    /**
+     * Check-in a booking
+     * @param pnr unique pnr code
+     */
     @Override
     public void checkIn(String pnr) {
         BookingEntity bookingEntity = bookingRepository.findByPnr(pnr).orElseThrow(() -> new NoBookingsFoundException("No bookings found with the pnr " + pnr));
@@ -98,6 +128,10 @@ public class BookingServiceImpl implements IBookingService {
     }
 
 
+    /**
+     * Sends a message to update the number of seats available
+     * @param flightDto contains flight details
+     */
     private void updateSeats(FlightDto flightDto){
         log.debug("Sending flightDto to RabbitMQ to update seats available {}" , flightDto);
         var result = streamBridge.send("updateSeats-out-0", flightDto);

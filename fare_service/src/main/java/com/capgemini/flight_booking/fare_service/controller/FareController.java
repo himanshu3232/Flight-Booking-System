@@ -10,6 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+
+/**
+ * Exposes the Fare REST API(s)
+ */
+
 @RestController
 @RequestMapping("/fare")
 @RequiredArgsConstructor
@@ -18,6 +23,11 @@ public class FareController {
 
     private final FlightFareClient flightFareClient;
 
+    /**
+     * Get the flight fare by hitting the API
+     * @param flightId unique flight id
+     * @return the flight fare
+     */
     @Operation(summary = "Get Fare", description = "Get Fare by passing flightId")
     @GetMapping
     public ResponseEntity<Double> getFare(@RequestParam long flightId) {

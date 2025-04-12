@@ -11,7 +11,7 @@
         <module name="config-server" />
         <module name="gateway" />
       </profile>
-      <profile name="Annotation profile for checkin_service" enabled="true">
+      <profile name="Annotation profile for search_service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -19,7 +19,6 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
         <module name="checkin_service" />
-        <module name="user-service" />
         <module name="fare_service" />
         <module name="booking_service" />
         <module name="search_service" />
@@ -27,6 +26,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="gds" target="21" />
+      <module name="user-service" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

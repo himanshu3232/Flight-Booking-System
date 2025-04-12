@@ -21,13 +21,17 @@ public class PaymentServiceImpl implements IPaymentService {
     private final FlightAvailabilityClient flightAvailabilityClient;
 
 
+
     /**
-     * @param bookingRequestDto the booking request made by client
+     * Processes the payment and returns the payment id
+     * @param bookingRequestDto request made by the client
+     * @param bookingId unique booking id
+     * @return payment id
      */
     @Override
     public long processPayment(BookingRequestDto bookingRequestDto, String bookingId) {
         FlightDto flightDto = flightAvailabilityClient
-                .getFlightAvailabilityById(bookingRequestDto.flightId());
+                .getFlightAvailabilityById(bookingRequestDto.flightId()).block();
 
         if(flightDto == null){
             throw new InvalidFlightIdException("Invalid flight ID: " + bookingRequestDto.flightId());
@@ -46,8 +50,9 @@ public class PaymentServiceImpl implements IPaymentService {
     }
 
     /**
-     * @param paymentId unique paymentId for each unique payment
-     * @return get payment status
+     * Check the payment status by passing in the payment id
+     * @param paymentId unique payment id
+     * @return payment status enum
      */
     @Override
     public PaymentStatus getPaymentStatus(long paymentId) {

@@ -1,11 +1,13 @@
 package com.capgemini.flight_booking.checkin_service.entity;
 
+import com.capgemini.flight_booking.checkin_service.enums.CheckInStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "check_in")
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class CheckInEntity {
 
-    public CheckInEntity(String pnr, boolean checkInStatus, String seatNumber) {
+    public CheckInEntity(String pnr, CheckInStatus checkInStatus, String seatNumber) {
         this.pnr = pnr;
         this.checkInStatus = checkInStatus;
         this.seatNumber = seatNumber;
@@ -29,8 +31,9 @@ public class CheckInEntity {
     @Column(name = "flight_id", nullable = false, unique = true)
     private String pnr;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "check_in_status", nullable = false)
-    private boolean checkInStatus;
+    private CheckInStatus checkInStatus;
 
     @CreatedDate
     @Column(name = "check_in_time", nullable = false)

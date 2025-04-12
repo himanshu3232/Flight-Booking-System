@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: booking-service
+  profiles:
+    active: prod
   cloud:
     function:
       definition: updateSeats; checkIn
