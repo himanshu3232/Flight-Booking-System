@@ -2,7 +2,6 @@ package com.capgemini.flight_booking.search_service.service;
 
 
 import com.capgemini.flight_booking.search_service.dto.FlightDto;
-import java.time.LocalDate;
 import java.util.List;
 
 public interface IFlightSearchService {
@@ -10,10 +9,9 @@ public interface IFlightSearchService {
      *
      * @param from onboarding airport
      * @param to destination airport
-     * @param date date of onboarding
-     * @return list of flights available from onboarding airport to destination on a particular day
+     * @return list of flights available from onboarding airport to destination
      */
-    List<FlightDto> getFlights(String from, String to, LocalDate date);
+    List<FlightDto> getFlights(String from, String to);
 
     /**
      * @return list of all available flights

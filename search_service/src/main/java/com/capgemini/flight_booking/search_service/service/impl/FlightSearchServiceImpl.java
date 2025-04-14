@@ -7,14 +7,11 @@ import com.capgemini.flight_booking.search_service.exception.InvalidFlightIdExce
 import com.capgemini.flight_booking.search_service.repository.FlightRepository;
 import com.capgemini.flight_booking.search_service.service.IFlightSearchService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class FlightSearchServiceImpl implements IFlightSearchService {
 
     private final FlightRepository flightRepository;
@@ -23,12 +20,11 @@ public class FlightSearchServiceImpl implements IFlightSearchService {
     /**
      * @param from onboarding airport
      * @param to destination airport
-     * @param date date of onboarding
      * @return list of flights available from onboarding airport to destination on a particular day
      */
     @Override
-    public List<FlightDto> getFlights(String from, String to, LocalDate date) {
-        List<FlightEntity> flightEntityList = flightRepository.getFlightsByFromAndToAndDate(from, to, date, date.plusDays(1));
+    public List<FlightDto> getFlights(String from, String to) {
+        List<FlightEntity> flightEntityList = flightRepository.getFlightsByFromAndTo(from, to);
         return flightEntityList.stream().map(Mapper::mapToFlightDto).toList();
     }
 
@@ -59,7 +55,6 @@ public class FlightSearchServiceImpl implements IFlightSearchService {
                 .findById(flightDto.flightId())
                 .orElseThrow(() -> new InvalidFlightIdException("Invalid flight ID: " + flightDto.flightId()));
         flightEntity.setSeatsAvailable(flightDto.seatsAvailable()-1);
-        log.info("Updated entity: {}", flightEntity);
         flightRepository.save(flightEntity);
     }
 }

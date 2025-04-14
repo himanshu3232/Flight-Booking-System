@@ -2,13 +2,18 @@ package com.capgemini.flight_booking.search_service.entity;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
 @Data
 @Table(name = "flights")
+@NoArgsConstructor
+@AllArgsConstructor
 public class FlightEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

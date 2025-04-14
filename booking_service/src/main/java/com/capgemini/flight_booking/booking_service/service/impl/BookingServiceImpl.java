@@ -18,11 +18,9 @@ import com.capgemini.flight_booking.booking_service.service.IPaymentService;
 import com.capgemini.flight_booking.booking_service.service.generate.GenerateId;
 import com.capgemini.flight_booking.booking_service.service.generate.GeneratePnr;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 
 import static com.capgemini.flight_booking.booking_service.dto.mapper.Mapper.mapToBookingEntity;
@@ -30,7 +28,6 @@ import static com.capgemini.flight_booking.booking_service.dto.mapper.Mapper.map
 
 @RequiredArgsConstructor
 @Service
-@Slf4j
 public class BookingServiceImpl implements IBookingService {
 
     private final BookingRepository bookingRepository;
@@ -133,8 +130,6 @@ public class BookingServiceImpl implements IBookingService {
      * @param flightDto contains flight details
      */
     private void updateSeats(FlightDto flightDto){
-        log.debug("Sending flightDto to RabbitMQ to update seats available {}" , flightDto);
-        var result = streamBridge.send("updateSeats-out-0", flightDto);
-        log.debug("Result from RabbitMQ: {}", result);
+        streamBridge.send("updateSeats-out-0", flightDto);
     }
 }

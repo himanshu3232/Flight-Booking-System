@@ -13,21 +13,34 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
   window?: () => Window;
 }
 
 const drawerWidth = 240;
-const navItems = ["Home", "Book", "Booking Details", "Check In"];
+const navItems = ["Home", "Book", "Bookings"];
 
 export default function Dashboard(props: Props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const navigate = useNavigate();
+  const handleRouting = (item: string) => {
+    switch (item) {
+      case "Book": {
+        navigate("/app/booking");
+        break;
+      }
+      case "Bookings": {
+        navigate("/app/bookings");
+        break;
+      }
+      default: {
+        navigate("/app");
+      }
+    }
+  };
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
@@ -40,9 +53,11 @@ export default function Dashboard(props: Props) {
       </Typography>
       <Divider />
       <List>
-        {navItems.map((item) => (
+        {navItems.map((item: string) => (
           <ListItem key={item} disablePadding>
-            <ListItemButton sx={{ textAlign: "center" }}>
+            <ListItemButton
+              sx={{ textAlign: "center" }}
+            >
               <ListItemText primary={item} />
             </ListItemButton>
           </ListItem>
@@ -77,7 +92,11 @@ export default function Dashboard(props: Props) {
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
             {navItems.map((item) => (
-              <Button key={item} sx={{ color: "#fff" }}>
+              <Button
+                onClick={() => handleRouting(item)}
+                key={item}
+                sx={{ color: "#fff" }}
+              >
                 {item}
               </Button>
             ))}
@@ -104,9 +123,6 @@ export default function Dashboard(props: Props) {
           {drawer}
         </Drawer>
       </nav>
-      <Box component="main" sx={{ p: 3 }}>
-        <Toolbar />
-      </Box>
     </Box>
   );
 }

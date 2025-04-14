@@ -1,7 +1,6 @@
 .center {
   max-width: 35rem;
   margin: 0 auto;
-  margin-top: 15%;
 }
 
 .gray {
@@ -10,4 +9,22 @@
 
 .light-gray {
   background-color: rgb(251, 243, 235);
+}
+
+.bg-img {
+  background-image: url("./assets/picture.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.center {
+  margin: 0 auto;
+  margin-top: 5rem;
 }

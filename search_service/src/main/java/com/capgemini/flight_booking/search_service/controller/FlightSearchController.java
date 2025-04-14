@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import java.time.LocalDate;
 import java.util.List;
 
 
@@ -32,13 +31,12 @@ public class FlightSearchController {
      * Checks if the flight is available
      * @param from origin
      * @param to destination
-     * @param date date of onboarding
      * @return list of flights
      */
-    @Operation(summary = "Search for flights", description = "Search for flights by passing from, to and date")
+    @Operation(summary = "Search for flights", description = "Search for flights by passing from and to")
     @GetMapping("/search")
-    public ResponseEntity<List<FlightDto>> searchFlights(@RequestParam String from, @RequestParam String to, @RequestParam String date) {
-        return ResponseEntity.ok(flightSearchService.getFlights(from, to,  LocalDate.parse(date)));
+    public ResponseEntity<List<FlightDto>> searchFlights(@RequestParam String from, @RequestParam String to) {
+        return ResponseEntity.ok(flightSearchService.getFlights(from, to));
     }
 
     /**
