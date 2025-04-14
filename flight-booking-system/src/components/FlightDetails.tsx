@@ -30,7 +30,7 @@ export default function FlightDetails(flightDetails: IFlightDetails) {
         </Button>
       </div>
       {book && (
-        <BookingModal setBook={setBook} flightId={flightDetails.flightId} />
+        <BookingModal book= {book} setBook={setBook} flightId={flightDetails.flightId} />
       )}
     </>
   );

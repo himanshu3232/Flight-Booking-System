@@ -1,6 +1,5 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useFormik } from "formik";
@@ -37,13 +36,14 @@ const style = {
 
 export default function BookingModal({
   flightId,
+  book,
   setBook,
 }: {
   flightId: number;
+  book: boolean;
   setBook: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const [open, setOpen] = React.useState(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => setBook(false);
   const [response, setResponse] = React.useState<null | IBookingResponse>(null);
   const dispatch = useDispatch();
 
@@ -56,10 +56,12 @@ export default function BookingModal({
       paidAmount: 0,
     },
     onSubmit: async (values: IBookingRequest): Promise<void> => {
-      const { data } = await axios.post("http://localhost:8072/booking-service/booking", values);
-      console.log(data)
+      const { data } = await axios.post(
+        "http://localhost:8072/booking-service/booking",
+        values
+      );
+      console.log(data);
       if (data) {
-        setOpen(false);
         setBook(false);
         setResponse(data);
         dispatch(addBooking({ ...values, pnr: data.pnr }));
@@ -70,7 +72,7 @@ export default function BookingModal({
   return (
     <div>
       <Modal
-        open={open}
+        open={book}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
