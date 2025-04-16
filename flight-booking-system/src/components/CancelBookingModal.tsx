@@ -42,6 +42,8 @@ export default function BasicModal({
       }
     );
 
+    console.log(response);
+
     if (response.status === 200) {
       setOpen(false);
       alert("Booking Cancelled Successfully");

@@ -5,6 +5,7 @@ import com.capgemini.flight_booking.booking_service.dto.BookingRequestDto;
 import com.capgemini.flight_booking.booking_service.dto.EmailDetails;
 import com.capgemini.flight_booking.booking_service.dto.FlightDto;
 import com.capgemini.flight_booking.booking_service.dto.ResponseDto;
+import com.capgemini.flight_booking.booking_service.dto.mapper.Mapper;
 import com.capgemini.flight_booking.booking_service.entity.BookingEntity;
 import com.capgemini.flight_booking.booking_service.enums.BookingStatus;
 import com.capgemini.flight_booking.booking_service.enums.CheckInStatus;
@@ -88,6 +89,8 @@ public class BookingServiceImpl implements IBookingService {
         bookingEntity.setCheckIn(CheckInStatus.NOT_CHECKED_IN);
         bookingRepository.save(bookingEntity);
 
+        sendConfirmationMail(RequestType.BOOK, bookingRequestDTO, pnr);
+
         return new ResponseDto(HttpStatus.CREATED, "Booking successful with pnr:" + bookingEntity.getPnr(), LocalDateTime.now(), pnr);
     }
 
@@ -117,6 +120,7 @@ public class BookingServiceImpl implements IBookingService {
     public void cancelBooking(String pnr) {
         if(getBookingByPnr(pnr) != null){
             bookingRepository.deleteByPnr(pnr);
+            sendConfirmationMail(RequestType.CANCEL, getBookingByPnr(pnr), pnr);
         }
     }
 
@@ -129,24 +133,25 @@ public class BookingServiceImpl implements IBookingService {
         BookingEntity bookingEntity = bookingRepository.findByPnr(pnr).orElseThrow(() -> new NoBookingsFoundException("No bookings found with the pnr " + pnr));
         bookingEntity.setCheckIn(CheckInStatus.CHECKED_IN);
         bookingRepository.save(bookingEntity);
+        sendConfirmationMail(RequestType.CHECK_IN, Mapper.mapToBookingRequestDto(bookingEntity), pnr);
     }
 
     /**
      * Sends email notification to the user
      * @param requestType type of the request CANCEL, BOOK or CHECKIN
-     * @param emailId email id of the recipient user
+     * @param bookingRequestDto user details
      */
     @Override
-    public void sendConfirmationMail(RequestType requestType, String emailId) {
+    public void sendConfirmationMail(RequestType requestType, BookingRequestDto bookingRequestDto, String pnr) {
         switch (requestType){
             case RequestType.CANCEL -> sendSimpleMail(
-                    new EmailDetails(emailId, "Cancel Booking", "Your booking has been cancelled")
+                    new EmailDetails(bookingRequestDto, String.format("Cancel Flight for %s%nYour refund of %.2f has been processed and will be deposited to your account", bookingRequestDto.passengerName(), bookingRequestDto.paidAmount()), "Your booking has been cancelled")
             );
             case RequestType.BOOK -> sendSimpleMail(
-                    new EmailDetails(emailId, "Book Flight", "Your flight has been booked")
+                    new EmailDetails(bookingRequestDto, String.format("Booked Flight for %s%nYour pnr is %s", bookingRequestDto.passengerName(), pnr) , "Your flight has been booked")
             );
             case RequestType.CHECK_IN-> sendSimpleMail(
-                    new EmailDetails(emailId, "Check In", "Your flight has been checked in")
+                    new EmailDetails(bookingRequestDto, String.format("Checked In Flight for %s%nYour pnr is %s", bookingRequestDto.passengerName(), pnr), "Your flight has been checked in")
             );
         }
     }
@@ -164,7 +169,7 @@ public class BookingServiceImpl implements IBookingService {
                     = new SimpleMailMessage();
 
             mailMessage.setFrom(sender);
-            mailMessage.setTo(details.recipient());
+            mailMessage.setTo(details.bookingRequestDto().passengerEmail());
             mailMessage.setText(details.msgBody());
             mailMessage.setSubject(details.subject());
 

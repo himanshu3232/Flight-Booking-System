@@ -1,4 +1,4 @@
 package com.capgemini.flight_booking.booking_service.dto;
 
-public record EmailDetails(String recipient, String msgBody, String subject) {
+public record EmailDetails(BookingRequestDto bookingRequestDto, String msgBody, String subject) {
 }

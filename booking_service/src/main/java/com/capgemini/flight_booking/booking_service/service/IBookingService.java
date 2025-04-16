@@ -43,5 +43,5 @@ public interface IBookingService {
     /**
      * Sends email notification to the user
      */
-    void sendConfirmationMail(RequestType requestType, String emailId);
+    void sendConfirmationMail(RequestType requestType, BookingRequestDto bookingRequestDto, String pnr);
 }
