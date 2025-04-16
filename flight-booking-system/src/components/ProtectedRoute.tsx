@@ -1,13 +1,13 @@
 import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
+import { keycloak } from "../service/key-cloak";
 
 interface IProtectedRouteProps {
-  isAllowed: boolean;
-  children?: ReactNode
+  children?: ReactNode;
 }
 
-export default function ProtectedRoute({ isAllowed, children }: IProtectedRouteProps) {
-  if (!isAllowed) return <Navigate to="/unauthorized" replace />;
-  return <>{children}</>; 
-}
+export default function ProtectedRoute({ children }: IProtectedRouteProps) {
 
+  if (keycloak.authenticated) return <Navigate to="/unauthorized" replace />;
+  return <>{children}</>;
+}

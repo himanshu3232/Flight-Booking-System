@@ -5,13 +5,11 @@ import LandingPage from "./components/LandingPage";
 import Booking from "./components/Booking";
 import UnAuthorized from "./components/UnAuthorized";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { useState } from "react";
 import Bookings from "./components/Bookings";
 import { Provider } from "react-redux";
 import { store } from "./app/store";
 
 export default function App() {
-  const [isLogin, setIsLogin] = useState(true);
   const router = createBrowserRouter([
     {
       path: "/",
@@ -20,7 +18,7 @@ export default function App() {
     {
       path: "/app",
       element: (
-        <ProtectedRoute isAllowed={isLogin}>
+        <ProtectedRoute>
           <AppLayout />
         </ProtectedRoute>
       ),

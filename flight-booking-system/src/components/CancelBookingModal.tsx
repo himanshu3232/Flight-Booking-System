@@ -1,7 +1,9 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
+import axios from "axios";
 import { useDispatch } from "react-redux";
 import { checkInBooking } from "../app/slice/bookingsSlice";
 
@@ -17,45 +19,54 @@ const style = {
   p: 4,
 };
 
-export default function CheckedInModal({
-  id,
-  seatNumber,
-  setCheckedIn,
-  checkedIn,
+export default function BasicModal({
+  open,
+  setOpen,
   pnr,
 }: {
-  id: number;
-  seatNumber: string;
-  setCheckedIn: React.Dispatch<React.SetStateAction<boolean>>;
-  checkedIn: boolean;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   pnr: string;
 }) {
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const dispatch = useDispatch();
 
-  const handleClose = () => {
-    setCheckedIn(false);
-    if (id) {
+  const handleCancel = async () => {
+    const response = await axios.delete(
+      "http://localhost:8072/booking-service/booking",
+      {
+        params: { pnr },
+      }
+    );
+
+    if (response.status === 200) {
+      setOpen(false);
+      alert("Booking Cancelled Successfully");
       dispatch(checkInBooking(pnr));
     }
   };
 
   return (
-    <div>
+    <>
       <Modal
-        open={checkedIn}
+        open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Check-In Successful!
+            Are You Sure You Want to Cancel ?
           </Typography>
-          <br />
-          <p>CheckIn Id: {id}</p>
-          <p>Seat Number: {seatNumber}</p>
+          <div className="d-flex">
+            <Button onClick={handleCancel}>Confirm</Button>
+            <Button onClick={handleClose}>Revert</Button>
+          </div>
         </Box>
       </Modal>
-    </div>
+    </>
   );
 }

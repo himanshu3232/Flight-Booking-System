@@ -2,24 +2,26 @@ package com.capgemini.flight_booking.booking_service.service.impl;
 
 import com.capgemini.flight_booking.booking_service.client.FlightAvailabilityClient;
 import com.capgemini.flight_booking.booking_service.dto.BookingRequestDto;
+import com.capgemini.flight_booking.booking_service.dto.EmailDetails;
 import com.capgemini.flight_booking.booking_service.dto.FlightDto;
 import com.capgemini.flight_booking.booking_service.dto.ResponseDto;
 import com.capgemini.flight_booking.booking_service.entity.BookingEntity;
 import com.capgemini.flight_booking.booking_service.enums.BookingStatus;
 import com.capgemini.flight_booking.booking_service.enums.CheckInStatus;
 import com.capgemini.flight_booking.booking_service.enums.PaymentStatus;
-import com.capgemini.flight_booking.booking_service.exception.InvalidFlightIdException;
-import com.capgemini.flight_booking.booking_service.exception.NoBookingsFoundException;
-import com.capgemini.flight_booking.booking_service.exception.NoSeatsAvailableException;
-import com.capgemini.flight_booking.booking_service.exception.PaymentFailedException;
+import com.capgemini.flight_booking.booking_service.enums.RequestType;
+import com.capgemini.flight_booking.booking_service.exception.*;
 import com.capgemini.flight_booking.booking_service.repository.BookingRepository;
 import com.capgemini.flight_booking.booking_service.service.IBookingService;
 import com.capgemini.flight_booking.booking_service.service.IPaymentService;
 import com.capgemini.flight_booking.booking_service.service.generate.GenerateId;
 import com.capgemini.flight_booking.booking_service.service.generate.GeneratePnr;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
@@ -34,6 +36,10 @@ public class BookingServiceImpl implements IBookingService {
     private final IPaymentService paymentService;
     private final FlightAvailabilityClient flightAvailabilityClient;
     private final StreamBridge streamBridge;
+    private final JavaMailSender javaMailSender;
+
+    @Value("${spring.mail.username}")
+    private String sender;
 
 
     /**
@@ -75,13 +81,14 @@ public class BookingServiceImpl implements IBookingService {
         updateSeats(flightDto);
 
         //Generate pnr code
-        bookingEntity.setPnr(GeneratePnr.generatePnr(flightDto.airline()));
+        String pnr = GeneratePnr.generatePnr(flightDto.airline());
+        bookingEntity.setPnr(pnr);
         bookingEntity.setStatus(BookingStatus.BOOKED);
         bookingEntity.setPaymentId(paymentId);
         bookingEntity.setCheckIn(CheckInStatus.NOT_CHECKED_IN);
         bookingRepository.save(bookingEntity);
 
-        return new ResponseDto(HttpStatus.CREATED, "Booking successful with pnr:" + bookingEntity.getPnr(), LocalDateTime.now());
+        return new ResponseDto(HttpStatus.CREATED, "Booking successful with pnr:" + bookingEntity.getPnr(), LocalDateTime.now(), pnr);
     }
 
 
@@ -122,6 +129,50 @@ public class BookingServiceImpl implements IBookingService {
         BookingEntity bookingEntity = bookingRepository.findByPnr(pnr).orElseThrow(() -> new NoBookingsFoundException("No bookings found with the pnr " + pnr));
         bookingEntity.setCheckIn(CheckInStatus.CHECKED_IN);
         bookingRepository.save(bookingEntity);
+    }
+
+    /**
+     * Sends email notification to the user
+     * @param requestType type of the request CANCEL, BOOK or CHECKIN
+     * @param emailId email id of the recipient user
+     */
+    @Override
+    public void sendConfirmationMail(RequestType requestType, String emailId) {
+        switch (requestType){
+            case RequestType.CANCEL -> sendSimpleMail(
+                    new EmailDetails(emailId, "Cancel Booking", "Your booking has been cancelled")
+            );
+            case RequestType.BOOK -> sendSimpleMail(
+                    new EmailDetails(emailId, "Book Flight", "Your flight has been booked")
+            );
+            case RequestType.CHECK_IN-> sendSimpleMail(
+                    new EmailDetails(emailId, "Check In", "Your flight has been checked in")
+            );
+        }
+    }
+
+    /**
+     * sends the mail to the recipient
+     * @param details details of the email
+     */
+    private void sendSimpleMail(EmailDetails details)
+    {
+        try {
+
+            // Creating a simple mail message
+            SimpleMailMessage mailMessage
+                    = new SimpleMailMessage();
+
+            mailMessage.setFrom(sender);
+            mailMessage.setTo(details.recipient());
+            mailMessage.setText(details.msgBody());
+            mailMessage.setSubject(details.subject());
+
+            // Sending the mail
+            javaMailSender.send(mailMessage);
+        }catch (Exception e) {
+            throw new EmailSendingException("Error while sending mail");
+        }
     }
 
 

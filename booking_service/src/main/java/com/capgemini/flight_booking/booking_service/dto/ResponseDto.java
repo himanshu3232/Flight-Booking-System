@@ -13,5 +13,6 @@ import java.time.LocalDateTime;
 public record ResponseDto(
         HttpStatus status,
         String response,
-        LocalDateTime time
+        LocalDateTime time,
+        String pnr
 ) {}

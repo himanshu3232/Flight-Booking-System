@@ -58,7 +58,7 @@ public class BookingController {
     @DeleteMapping
     public ResponseEntity<ResponseDto> cancelBooking(@RequestParam String pnr) {
         bookingService.cancelBooking(pnr);
-        ResponseDto responseDto = new ResponseDto(HttpStatus.OK, "Booking cancelled successfully", LocalDateTime.now());
+        ResponseDto responseDto = new ResponseDto(HttpStatus.OK, "Booking cancelled successfully", LocalDateTime.now(), pnr);
         return ResponseEntity.ok(responseDto);
     }
 }

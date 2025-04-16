@@ -3,6 +3,7 @@ package com.capgemini.flight_booking.booking_service.service;
 
 import com.capgemini.flight_booking.booking_service.dto.BookingRequestDto;
 import com.capgemini.flight_booking.booking_service.dto.ResponseDto;
+import com.capgemini.flight_booking.booking_service.enums.RequestType;
 import com.capgemini.flight_booking.booking_service.exception.InvalidFlightIdException;
 import com.capgemini.flight_booking.booking_service.exception.NoBookingsFoundException;
 import com.capgemini.flight_booking.booking_service.exception.NoSeatsAvailableException;
@@ -38,4 +39,9 @@ public interface IBookingService {
      * @param pnr unique pnr code
      */
     void checkIn(String pnr);
+
+    /**
+     * Sends email notification to the user
+     */
+    void sendConfirmationMail(RequestType requestType, String emailId);
 }

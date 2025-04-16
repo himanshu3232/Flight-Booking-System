@@ -4,6 +4,19 @@ server:
 spring:
   application:
     name: booking-service
+
+  mail:
+    host : smtp.gmail.com
+    port : 587
+    username : ${GMAIL_USERNAME}
+    password : ${GMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   profiles:
     active: prod
   cloud:

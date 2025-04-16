@@ -1,6 +1,7 @@
 import React from "react";
 import BookingModal from "./BookingModal";
 import Button from "@mui/material/Button";
+import BookingSuccessfulModal from "./BookingSuccessfulModal";
 
 export interface IFlightDetails {
   flightId: number;
@@ -16,6 +17,8 @@ export interface IFlightDetails {
 
 export default function FlightDetails(flightDetails: IFlightDetails) {
   const [book, setBook] = React.useState(false);
+  const [pnr, setPnr] = React.useState<string>("");
+  const [open, setOpen] = React.useState(false);
 
   return (
     <>
@@ -25,12 +28,28 @@ export default function FlightDetails(flightDetails: IFlightDetails) {
           {" 💵"}
           Price: {flightDetails.price}{" "}
         </p>
-        <Button variant="text" color="primary" onClick={() => setBook(true)}>
+        <Button
+          variant="text"
+          color="primary"
+          onClick={() => {
+            setBook(true);
+          }}
+        >
           Book Now
         </Button>
       </div>
       {book && (
-        <BookingModal book= {book} setBook={setBook} flightId={flightDetails.flightId} />
+        <BookingModal
+          setPnr={setPnr}
+          book={book}
+          setBook={setBook}
+          setOpen={setOpen}
+          price={flightDetails.price}
+          flightId={flightDetails.flightId}
+        />
+      )}
+      {open && (
+        <BookingSuccessfulModal open={open} setOpen={setOpen} pnr={pnr} />
       )}
     </>
   );

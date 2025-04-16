@@ -27,7 +27,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         var response = new ResponseDto(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 e.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                null
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -51,7 +52,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         var response = new ResponseDto(
                 HttpStatus.BAD_REQUEST,
                 e.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                null
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
@@ -61,7 +63,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         var response = new ResponseDto(
                 HttpStatus.BAD_REQUEST,
                 e.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                null
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
@@ -72,7 +75,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         var response = new ResponseDto(
                 HttpStatus.BAD_REQUEST,
                 e.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                null
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
@@ -82,7 +86,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         var response = new ResponseDto(
                 HttpStatus.BAD_REQUEST,
                 e.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                null
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
@@ -92,7 +97,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         var response = new ResponseDto(
                 HttpStatus.BAD_REQUEST,
                 e.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                null
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
@@ -102,7 +108,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         var response = new ResponseDto(
                 HttpStatus.BAD_REQUEST,
                 e.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                null
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }

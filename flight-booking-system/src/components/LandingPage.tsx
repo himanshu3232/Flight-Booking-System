@@ -11,9 +11,7 @@ export default function LandingPage() {
           style={{ width: 800, backgroundColor: "beige" }}
         >
           <div className="card-body">
-            <h5 className="card-title">
-              <h1 className="display-2">Book Flights Instantly!</h1>
-            </h5>
+            <h5 className="card-title display-2">Book Flights Instantly!</h5>
             <h6 className="card-subtitle mb-2 text-body-secondary">Features</h6>
             <p className="card-text">
               🏠 Easy Start Simple home screen with big, clear buttons “From”

@@ -3,10 +3,10 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useFormik } from "formik";
-import axios from "axios";
-import BookingSuccessfulModal from "./BookingSuccessfulModal";
+import axios, { HttpStatusCode } from "axios";
 import { useDispatch } from "react-redux";
 import { addBooking } from "../app/slice/bookingsSlice";
+import { keycloak } from "../service/key-cloak";
 
 export interface IBookingRequest {
   flightId: number;
@@ -14,12 +14,6 @@ export interface IBookingRequest {
   passengerEmail: string;
   passengerAge: number;
   paidAmount: number;
-}
-
-export interface IBookingResponse {
-  bookingId: number;
-  pnr: string;
-  seatNumber: string;
 }
 
 const style = {
@@ -36,15 +30,20 @@ const style = {
 
 export default function BookingModal({
   flightId,
-  book,
   setBook,
+  setOpen,
+  book,
+  price,
+  setPnr,
 }: {
   flightId: number;
   book: boolean;
   setBook: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  price: number;
+  setPnr: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const handleClose = () => setBook(false);
-  const [response, setResponse] = React.useState<null | IBookingResponse>(null);
   const dispatch = useDispatch();
 
   const formik = useFormik({
@@ -53,18 +52,26 @@ export default function BookingModal({
       passengerName: "",
       passengerEmail: "",
       passengerAge: 0,
-      paidAmount: 0,
+      paidAmount: price,
     },
     onSubmit: async (values: IBookingRequest): Promise<void> => {
-      const { data } = await axios.post(
+      await keycloak.updateToken(5)
+      const res = await axios.post(
         "http://localhost:8072/booking-service/booking",
-        values
+        values,
+        {
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
-      console.log(data);
-      if (data) {
+      const newPnr: string = res.data.pnr;
+      if (res.status === HttpStatusCode.Created) {
         setBook(false);
-        setResponse(data);
-        dispatch(addBooking({ ...values, pnr: data.pnr }));
+        setOpen(true);
+        setPnr(newPnr);
+        dispatch(addBooking({ ...values, pnr: newPnr }));
       }
     },
   });
@@ -113,8 +120,6 @@ export default function BookingModal({
           </form>
         </Box>
       </Modal>
-
-      {response && <BookingSuccessfulModal {...response} />}
     </div>
   );
 }

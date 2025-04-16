@@ -1,4 +1,18 @@
+import { keycloak } from "../service/key-cloak";
+
 export default function LoginPage() {
+  const handleLogin = async () => {
+    try {
+      await keycloak.login({
+        redirectUri: window.location.origin + "/app",
+      });
+      console.log("token", keycloak.token);
+    } catch (error) {
+      alert("Login failed. Please try again.");
+      console.error("Login error:", error);
+    }
+  };
+
   return (
     <>
       <div className="card text-center center">
@@ -8,9 +22,9 @@ export default function LoginPage() {
           <p className="card-text">
             You will be redirected to Keycloak auth page
           </p>
-          <a href="#" className="btn btn-primary">
+          <button onClick={handleLogin} className="btn btn-primary">
             Login
-          </a>
+          </button>
         </div>
       </div>
     </>
