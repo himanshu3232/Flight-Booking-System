@@ -119,8 +119,8 @@ public class BookingServiceImpl implements IBookingService {
     @Override
     public void cancelBooking(String pnr) {
         if(getBookingByPnr(pnr) != null){
-            bookingRepository.deleteByPnr(pnr);
             sendConfirmationMail(RequestType.CANCEL, getBookingByPnr(pnr), pnr);
+            bookingRepository.deleteByPnr(pnr);
         }
     }
 
